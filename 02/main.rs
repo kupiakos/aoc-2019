@@ -45,9 +45,17 @@ fn run_intcode(prog: &mut [i64]) -> Result<(), Error> {
     }
 }
 
+fn run_gravity_program(prog: &[i64], noun: i64, verb: i64) -> Result<i64, Error> {
+    let mut prog_copy = Vec::from(prog);
+    prog_copy[1] = noun;
+    prog_copy[2] = verb;
+    run_intcode(&mut prog_copy)?;
+    Ok(prog_copy[0])
+}
+
 fn main() {
     let file = File::open("02/input.txt").expect("give me input");
-    let mut prog: Vec<i64> = BufReader::new(file)
+    let prog: Vec<i64> = BufReader::new(file)
         .split(b',')
         .map(|elem| {
             std::str::from_utf8(&elem.unwrap())
@@ -57,10 +65,20 @@ fn main() {
                 .expect("not an int?")
         })
         .collect();
-    prog[1] = 12;
-    prog[2] = 2;
-    run_intcode(&mut prog).expect("run intcode");
-    println!("Part 1: {}", prog[0]);
+    println!(
+        "Part 1: {}",
+        run_gravity_program(&prog, 12, 2).expect("run intcode")
+    );
+    println!("Bruteforcing solution for part 2...");
+    const DESIRED_SOLUTION: i64 = 19690720;
+    for noun in 0..=99 {
+        for verb in 0..=99 {
+            if run_gravity_program(&prog, noun, verb).expect("run intcode") == DESIRED_SOLUTION {
+                println!("Part 2: {} (100 * {} + {})", 100 * noun + verb, noun, verb);
+                return;
+            }
+        }
+    }
 }
 
 #[cfg(tests)]
