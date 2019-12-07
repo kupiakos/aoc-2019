@@ -5,6 +5,7 @@ authors = ["alyssa"]
 edition = "2018"
 
 [dependencies]
+itertools = "0.8.2"
 
 [[bin]]
 name = "aoc-01"
@@ -13,3 +14,7 @@ path = "01/main.rs"
 [[bin]]
 name = "aoc-02"
 path = "02/main.rs"
+
+[[bin]]
+name = "aoc-03"
+path = "03/main.rs"
