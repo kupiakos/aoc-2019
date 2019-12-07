@@ -43,7 +43,7 @@ fn main() {
     );
 }
 
-#[cfg(tests)]
+#[cfg(test)]
 mod tests {
     use super::*;
 
