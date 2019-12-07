@@ -1,65 +1,17 @@
-#[macro_use]
-extern crate itertools;
+#[macro_use] extern crate itertools;
 
 use std::cmp::{max, min};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-// (x, y)
 type Point = (i32, i32);
 type Interval = (i32, i32);
 
 // Always left to right, then bottom to top.
-// type LineSegment = (Point, Point);
-
 enum LineSegment {
     Vertical { x: i32, y1: i32, y2: i32 },
     Horizontal { x1: i32, x2: i32, y: i32 },
 }
-// impl Point {
-//     fn cross(a: &Self, b: &Self) -> i32 {
-//         a.0 * b.1 - a.1 * b.0
-//     }
-
-//     fn dot(a: &Self, b: &Self) -> i32 {
-//         a.0 * b.0 + a.1 * b.1
-//     }
-
-//     fn div(a: &Self, b: i32) -> Self {
-//         (a.0 / b, a.1 / b)
-//     }
-// }
-
-// fn find_line_intersection(a: &LineSegment, b: &LineSegment) -> Option<Point> {
-//     // https://stackoverflow.com/a/565282
-//     let p = a.0;
-//     let q = b.0;
-//     let r = a.1 - a.0;
-//     let s = b.1 - b.0;
-
-//     let r_cross_s = Point::cross(&r, &s);
-//     let q_minus_p = q - p;
-//     let q_minus_p_cross_r = Point::cross(&q_minus_p, &r);
-
-//     // Are the lines parallel?
-//     if r_cross_s == 0 {
-//         if q_minus_p_cross_r == 0 {
-//             // They are collinear. Do they overlap?
-//             let r_dot_r = Point::dot(&r, &r);
-//             let t0 = Point::dot(&q_minus_p, &r) / r_dot_r;
-//             let t1 = t0 + Point::dot(&s, &r) / r_dot_r;
-//             if t0 > t1 {
-//                 std::mem::swap(&mut t0, &mut t1)
-//             }
-//             t0 <= 1 && 0 <= t1
-//         } else {
-//             // They are parallel but not collinear.
-//             false
-//         }
-//     } else {
-//         let t =
-//     }
-// }
 
 fn point_in_interval(i: &Interval, x: i32) -> bool {
     i.0 <= x && x <= i.1
