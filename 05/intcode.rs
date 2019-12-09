@@ -1,7 +1,6 @@
 use std::convert::TryInto;
 use std::io::Read;
 use std::io::{BufRead, BufReader};
-use std::ops::{Add, Mul};
 
 #[derive(Debug)]
 pub enum Error {
@@ -109,17 +108,18 @@ pub fn run_intcode<In: FnMut() -> i64, Out: FnMut(i64)>(
                 .ok_or(Error::PcOutOfBounds(pc.try_into().unwrap()))?,
         );
         match opcode.opcode() {
-            1 | 2 => {
+            1 | 2 | 7 | 8 => {
                 let mut params = opcode.params();
-                let p1 = load_param(prog, pc + 1, params.next().unwrap())?;
-                let p2 = load_param(prog, pc + 2, params.next().unwrap())?;
+                let x = load_param(prog, pc + 1, params.next().unwrap())?;
+                let y = load_param(prog, pc + 2, params.next().unwrap())?;
                 let out_index = store_param(prog, pc + 3, params.next().unwrap())?;
-                let op: fn(i64, i64) -> i64 = if opcode.opcode() == 1 {
-                    i64::add
-                } else {
-                    i64::mul
+                let result = match opcode.opcode() {
+                    1 => x + y,
+                    2 => x * y,
+                    7 => (x < y) as i64,
+                    8 => (x == y) as i64,
+                    _ => unreachable!(),
                 };
-                let result = op(p1, p2);
                 set_item(prog, out_index, result)?;
                 pc += 4;
             }
@@ -132,6 +132,23 @@ pub fn run_intcode<In: FnMut() -> i64, Out: FnMut(i64)>(
                 let value = load_param(prog, pc + 1, opcode.params().next().unwrap())?;
                 output(value);
                 pc += 2;
+            }
+            5 | 6 => {
+                let mut params = opcode.params();
+                let value = load_param(prog, pc + 1, params.next().unwrap())?;
+                let new_pc = load_param(prog, pc + 2, params.next().unwrap())?
+                    .try_into()
+                    .unwrap();
+                let jump = match opcode.opcode() {
+                    5 => value != 0,
+                    6 => value == 0,
+                    _ => unreachable!(),
+                };
+                if jump {
+                    pc = new_pc;
+                } else {
+                    pc += 3;
+                }
             }
             99 => return Ok(()),
             _ => return Err(Error::UnknownOpcode(opcode.full)),
