@@ -7,6 +7,10 @@ edition = "2018"
 [dependencies]
 indextree = "4.0.0"
 
+[lib]
+name = "intcode"
+path = "intcode/lib.rs"
+
 [[bin]]
 name = "aoc-01"
 path = "01/main.rs"
@@ -30,3 +34,4 @@ path = "05/main.rs"
 [[bin]]
 name = "aoc-06"
 path = "06/main.rs"
+

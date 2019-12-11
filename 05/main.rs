@@ -1,6 +1,6 @@
 use std::fs::File;
 
-mod intcode;
+use intcode;
 
 fn run_tests(prog: &mut [i64], system_id: i64) -> i64 {
     let mut outs = Vec::new();
