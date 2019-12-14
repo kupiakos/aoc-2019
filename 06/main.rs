@@ -102,7 +102,7 @@ mod tests {
             ("K", "L"),
         ];
         let mut tree = OrbitTree::new();
-        for (src, dst) in orbits.into_iter() {
+        for (src, dst) in orbits.iter() {
             tree.add_orbit(src, dst);
         }
         assert_eq!(tree.orbit_count_checksum(), 42);

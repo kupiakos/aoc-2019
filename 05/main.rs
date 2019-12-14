@@ -1,10 +1,11 @@
 use std::fs::File;
 
-use intcode;
+use intcode::Intcode;
 
-fn run_tests(prog: &mut [i64], system_id: i64) -> i64 {
+fn run_tests(prog: &mut Intcode, system_id: i64) -> i64 {
     let mut outs = Vec::new();
-    intcode::run_intcode(prog, || system_id, |out| outs.push(out)).expect("intcode error");
+    prog.run(|| system_id, |out| outs.push(out))
+        .expect("intcode error");
     let code = outs.pop();
     println!("{} tests ran: {:?}", outs.len(), outs);
     assert!(outs.into_iter().all(|x| x == 0));
@@ -13,21 +14,20 @@ fn run_tests(prog: &mut [i64], system_id: i64) -> i64 {
 
 fn main() {
     let file = File::open("05/input.txt").expect("where input bb");
-    let prog = intcode::read_intcode(file);
+    let prog = &mut Intcode::read(file).expect("cannot read intcode");
     println!("=== Part 1 ===");
-    println!("Diagnostic Code: {}", run_tests(&mut prog.clone(), 1));
+    println!("Diagnostic Code: {}", run_tests(prog, 1));
     println!("=== Part 2 ===");
-    println!("Diagnostic Code: {}", run_tests(&mut prog.clone(), 5));
+    println!("Diagnostic Code: {}", run_tests(prog, 5));
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn test_with_output(prog: &mut [i64], input: i64, output: i64) {
+    fn test_with_output(prog: &mut Intcode, input: i64, output: i64) {
         let mut out = None;
-        intcode::run_intcode(
-            prog,
+        prog.run(
             || input,
             |x| {
                 assert!(out.is_none());
@@ -40,14 +40,14 @@ mod tests {
 
     #[test]
     fn large_example() {
-        let prog = [
+        let prog = &mut Intcode::new(vec![
             3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0,
             0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4,
             20, 1105, 1, 46, 98, 99,
-        ];
+        ]);
 
-        test_with_output(&mut prog.clone(), 7, 999);
-        test_with_output(&mut prog.clone(), 8, 1000);
-        test_with_output(&mut prog.clone(), 9, 1001);
+        test_with_output(prog, 7, 999);
+        test_with_output(prog, 8, 1000);
+        test_with_output(prog, 9, 1001);
     }
 }

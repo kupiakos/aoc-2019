@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 indextree = "4.0.0"
+permutohedron = "0.2.4"
 
 [lib]
 name = "intcode"
@@ -35,3 +36,6 @@ path = "05/main.rs"
 name = "aoc-06"
 path = "06/main.rs"
 
+[[bin]]
+name = "aoc-07"
+path = "07/main.rs"
